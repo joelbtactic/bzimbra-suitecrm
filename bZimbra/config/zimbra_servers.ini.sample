@@ -1,0 +1,13 @@
+; Configuración de los servidores de Zimbra a sincronizar
+; De cada servidor hay que especificar el acceso a la API SOAP de Zimbra
+
+[server_1]
+api_url = 'https://zimbra.example.com:7071/service/admin/soap'
+user = 'admin'
+password = 'admin_password'
+
+[server_2]
+api_url = 'https://zimbra2.example.com:7071/service/admin/soap'
+user = 'admin'
+password = 'admin_password'
+
