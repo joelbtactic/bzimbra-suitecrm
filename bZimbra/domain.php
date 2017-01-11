@@ -47,6 +47,17 @@ abstract class Domain {
         self::set_attribute($domain_atributes, $bean,
                 'zimbraDomainDefaultCOSId', 'id_clase_servicio_por_defecto');
         $bean->save();
+        self::relate_zimbra_domain_with_domain($bean, $domain->name);
+    }
+
+    static private function relate_zimbra_domain_with_domain($zimbra_bean, $domain) {
+        $keys_values = array();
+        $keys_values['name'] = $domain;
+        $domain_bean = retrieve_record_bean('btc_Dominios', $keys_values);
+        if (!empty($domain_bean->id)) {
+            $domain_bean->load_relationship('btc_dominios_btc_bmail');
+            $domain_bean->btc_dominios_btc_bmail->add($zimbra_bean);
+        }
     }
 
     static private function set_attribute($domain_info, $bean, $dinfo_var, $bean_var) {
