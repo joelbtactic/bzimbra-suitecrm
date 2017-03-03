@@ -38,4 +38,14 @@ function bytes_to_gibibytes($bytes) {
     return bytes($bytes, 'GiB', false);
 }
 
+function set_attribute($record_info, $bean, $info_var, $bean_var) {
+    if(isset($record_info[$info_var])) $bean->$bean_var = $record_info[$info_var];
+}
+
+function set_mb_attribute($record_info, $bean, $info_var, $bean_var) {
+    if(isset($record_info[$info_var])) {
+        $bean->$bean_var = bytes_to_megabytes($record_info[$info_var]);
+    }
+}
+
 ?>
