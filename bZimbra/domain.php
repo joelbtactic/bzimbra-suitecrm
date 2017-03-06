@@ -7,8 +7,10 @@ require_once('bZimbra/bean_utils.php');
 abstract class Domain {
 
     static public function sync_all_domains() {
-        foreach (ZimbraAPI::get_zimbra_servers() as $server) {
-            $api_instance = ZimbraAPI::get_api_instance($server);
+        foreach (ZimbraAPI::get_zimbra_servers() as $servername => $server_properties) {
+            $GLOBALS['log']->fatal("[bZimbra] Syncing domains of '".$servername
+                    ."' server...");
+            $api_instance = ZimbraAPI::get_api_instance($server_properties);
             self::sync_all_domains_of_server($api_instance);
         }
     }
@@ -18,6 +20,7 @@ abstract class Domain {
         foreach ($domains as $domain) {
             self::sync_domain($domain);
         }
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains)." Zimbra domains synced.");
     }
 
     static public function sync_domain($domain) {
