@@ -24,7 +24,6 @@ abstract class Account {
     }
 
     static public function sync_account($account) {
-        $account_atributes = get_atributes_as_array($account->a);
         $keys_values = array();
         $keys_values['name'] = $account->name;
         $bean = retrieve_record_bean('btc_Zimbra_Accounts', $keys_values);
