@@ -8,8 +8,8 @@ require_once('bZimbra/domain_quota.php');
 function main() {
     $GLOBALS['log']->fatal("[bZimbra] Entering bZimbra synchronization.");
     Domain::sync_all_domains();
-    Account::sync_all_accounts();
-    Quota::sync_all_quotas();
+//    Account::sync_all_accounts();
+//    Quota::sync_all_quotas();
     DomainQuota::sync_all_domains();
     $GLOBALS['log']->fatal("[bZimbra] bZimbra synchronization finished.");
     return true;

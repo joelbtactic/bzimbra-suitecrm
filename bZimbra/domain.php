@@ -3,6 +3,8 @@
 require_once('bZimbra/zimbra_api.php');
 require_once('bZimbra/utils.php');
 require_once('bZimbra/bean_utils.php');
+require_once('bZimbra/account.php');
+require_once('bZimbra/quota.php');
 
 abstract class Domain {
 
@@ -19,6 +21,8 @@ abstract class Domain {
         $domains = $api_instance->getAllDomains()->domain;
         foreach ($domains as $domain) {
             self::sync_domain($domain);
+            Account::sync_all_accounts_of_domain($api_instance, $domain->name);
+            Quota::sync_all_quotas_of_domain($api_instance, $domain->name);
         }
         $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains)." Zimbra domains synced.");
     }

@@ -23,6 +23,20 @@ abstract class Quota {
         $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas)." Zimbra quotas synced.");
     }
 
+    static public function sync_all_quotas_of_domain($api_instance, $domain) {
+        $quotas = $api_instance->getQuotaUsage($domain, true);
+        if (!isset($quotas->account)) {
+             $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no "
+                     ."accounts quotas to sync. Maybe it's an alias.");
+             return;
+        }
+        foreach ($quotas->account as $quota) {
+            self::sync_quota((array) $quota);
+        }
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->account).
+                ." Zimbra quotas synced from domain '".$domain."'.");
+    }
+
     static public function sync_quota($quota) {
         $keys_values = array();
         $keys_values['name'] = $quota['name'];

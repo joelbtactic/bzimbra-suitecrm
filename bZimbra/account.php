@@ -23,6 +23,21 @@ abstract class Account {
         $GLOBALS['log']->fatal("[bZimbra] --> ".count($accounts)." Zimbra accounts synced.");
     }
 
+    static public function sync_all_accounts_of_domain($api_instance, $domain) {
+        $domain_sel = new \Zimbra\Admin\Struct\DomainSelector(\Zimbra\Enum\DomainBy::NAME(), $domain);
+        $accounts = $api_instance->getAllAccounts(null, $domain_sel);
+        if (!isset($accounts->account)) {
+             $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no accounts to sync. "
+                     ."Maybe it's an alias.");
+             return;
+        }
+        foreach ($accounts->account as $account) {
+            self::sync_account($account);
+        }
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($accounts->account)
+                ." Zimbra accounts synced from domain '".$domain."'.");
+    }
+
     static public function sync_account($account) {
         $keys_values = array();
         $keys_values['name'] = $account->name;
