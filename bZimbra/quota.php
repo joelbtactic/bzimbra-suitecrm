@@ -33,7 +33,7 @@ abstract class Quota {
         foreach ($quotas->account as $quota) {
             self::sync_quota((array) $quota);
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->account).
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->account)
                 ." Zimbra quotas synced from domain '".$domain."'.");
     }
 
