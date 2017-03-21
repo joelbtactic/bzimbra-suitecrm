@@ -48,4 +48,19 @@ function set_mb_attribute($record_info, $bean, $info_var, $bean_var) {
     }
 }
 
+function check_mx($domain) {
+    require('bZimbra/config/valid_mx_servers.php');
+    getmxrr($domain, $mx_records);
+    if (isset($mx_records[0])) {
+        foreach ($mx_records as $mx_record) {
+            if (!in_array($mx_record, $valid_mx)) {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
 ?>

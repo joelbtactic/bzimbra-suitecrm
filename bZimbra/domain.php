@@ -53,6 +53,7 @@ abstract class Domain {
         //self::set_attribute($domain_atributes, $bean, 'zimbraDomainStatus', '');
         set_attribute($domain_atributes, $bean,
                 'zimbraDomainDefaultCOSId', 'id_clase_servicio_por_defecto');
+        $bean->verificacion_mx = check_mx($bean->name);
         $bean->save();
         self::relate_zimbra_domain_with_domain($bean, $domain->name);
     }

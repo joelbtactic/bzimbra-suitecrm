@@ -1,0 +1,10 @@
+<?php
+
+$valid_mx = array(
+    'mta01.example.com',
+    'mta02.example.com',
+    'smtp01.example.com',
+    'smtp02.example.com',
+);
+
+?>
