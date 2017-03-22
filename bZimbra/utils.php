@@ -63,4 +63,11 @@ function check_mx($domain) {
     }
 }
 
+function check_txt($domain) {
+    require('bZimbra/config/valid_txt_servers.php');
+    $txt = dns_get_record($domain, DNS_TXT);
+    if (count($txt) != 1 || !isset($txt[0]['txt'])) return false;
+    return preg_match($txt_records, $txt[0]['txt']);
+}
+
 ?>
