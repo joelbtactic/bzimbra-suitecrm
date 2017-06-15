@@ -4,7 +4,7 @@ require_once('bZimbra/zimbra_api.php');
 require_once('bZimbra/utils.php');
 require_once('bZimbra/bean_utils.php');
 
-abstract class Account {
+abstract class ZimbraAccount {
 
     static public function sync_all_accounts() {
         foreach (ZimbraAPI::get_zimbra_servers() as $servername => $server_properties) {
