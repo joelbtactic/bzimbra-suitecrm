@@ -1,1 +1,3 @@
 *.ini
+bZimbra/config/valid_txt_servers.php
+bZimbra/config/valid_mx_servers.php
