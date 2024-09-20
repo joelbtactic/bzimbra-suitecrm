@@ -3,7 +3,7 @@
 function get_atributes_as_array($object_info) {
     $atributes = array();
     foreach ($object_info as $atribute) {
-        if (isset($atribute->_)) $atributes[$atribute->n] = $atribute->_;
+        $atributes[$atribute->getKey()] = $atribute->getValue();
     }
     return $atributes;
 }
