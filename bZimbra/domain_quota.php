@@ -16,11 +16,11 @@ abstract class DomainQuota {
     }
 
     static public function sync_all_domains_of_server($api_instance) {
-        $domains = $api_instance->computeAggregateQuotaUsage()->domain;
-        foreach ($domains as $domain) {
-            self::sync_domain((array) $domain);
+        $domains = $api_instance->computeAggregateQuotaUsage();
+        foreach ($domains->getDomainQuotas() as $domain) {
+            self::sync_domain($domain);
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains)." Zimbra domains quotas synced.");
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getDomainQuotas())." Zimbra domains quotas synced.");
     }
 
     static public function sync_domain($domain) {
@@ -28,7 +28,7 @@ abstract class DomainQuota {
         $keys_values['name'] = $domain['name'];
         $bean = retrieve_record_bean('btc_bMail', $keys_values);
         $bean->name = $domain['name'];
-        set_mb_attribute($domain, $bean, 'used', 'usado');
+        set_quota_used_attr($domain, $bean,'usado');
         $bean->save();
     }
 
