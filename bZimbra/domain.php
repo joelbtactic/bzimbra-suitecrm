@@ -4,7 +4,7 @@ require_once('bZimbra/zimbra_api.php');
 require_once('bZimbra/utils.php');
 require_once('bZimbra/bean_utils.php');
 require_once('bZimbra/account.php');
-require_once('bZimbra/quota.php');
+require_once('bZimbra/account_quota.php');
 
 abstract class Domain {
 
@@ -18,21 +18,21 @@ abstract class Domain {
     }
 
     static public function sync_all_domains_of_server($api_instance) {
-        $domains = $api_instance->getAllDomains()->domain;
-        foreach ($domains as $domain) {
+        $domains = $api_instance->getAllDomains();
+        foreach ($domains->getDomainList() as $domain) {
             self::sync_domain($domain);
-            ZimbraAccount::sync_all_accounts_of_domain($api_instance, $domain->name);
-            Quota::sync_all_quotas_of_domain($api_instance, $domain->name);
+            ZimbraAccount::sync_all_accounts_of_domain($api_instance, $domain->getName());
+            AccountQuota::sync_all_quotas_of_domain($api_instance, $domain->getName());
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains)." Zimbra domains synced.");
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getAllDomains())." Zimbra domains synced.");
     }
 
     static public function sync_domain($domain) {
         $keys_values = array();
-        $keys_values['name'] = $domain->name;
+        $keys_values['name'] = $domain->getName();
         $bean = retrieve_record_bean('btc_bMail', $keys_values);
-        $bean->name = $domain->name;
-        $domain_atributes = get_atributes_as_array($domain->a);
+        $bean->name = $domain->getName();
+        $domain_atributes = get_atributes_as_array($domain->getAttrList());
         set_mb_attribute($domain_atributes, $bean,
                 'zimbraMailDomainQuota', 'capacidad');
         set_mb_attribute($domain_atributes, $bean,
@@ -56,7 +56,7 @@ abstract class Domain {
         $bean->verificacion_mx = check_mx($bean->name);
         $bean->verificacion_txt = check_txt($bean->name);
         $bean->save();
-        self::relate_zimbra_domain_with_domain($bean, $domain->name);
+        self::relate_zimbra_domain_with_domain($bean, $domain->getName());
     }
 
     static private function relate_zimbra_domain_with_domain($zimbra_bean, $domain) {
