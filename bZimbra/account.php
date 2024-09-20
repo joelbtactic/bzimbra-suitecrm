@@ -3,6 +3,9 @@
 require_once('bZimbra/zimbra_api.php');
 require_once('bZimbra/utils.php');
 require_once('bZimbra/bean_utils.php');
+require_once 'bZimbra/zimbra-api/vendor/autoload.php';
+use Zimbra\Admin\Struct\DomainSelector;
+use Zimbra\Common\Enum\DomainBy;
 
 abstract class ZimbraAccount {
 
@@ -25,26 +28,27 @@ abstract class ZimbraAccount {
     // }
 
     static public function sync_all_accounts_of_domain($api_instance, $domain) {
-        $domain_sel = new \Zimbra\Admin\Struct\DomainSelector(\Zimbra\Enum\DomainBy::NAME(), $domain);
+        $domain_sel = new DomainSelector(DomainBy::NAME, $domain);
         $accounts = $api_instance->getAllAccounts(null, $domain_sel);
-        if (!isset($accounts->account)) {
+        $accountList = $accounts->getAccountList();
+        if (!isset($accountList)) {
              $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no accounts to sync. "
                      ."Maybe it's an alias.");
              return;
         }
-        foreach ($accounts->account as $account) {
+        foreach ($accounts->getAccountList() as $account) {
             self::sync_account($account);
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($accounts->account)
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($accounts->getAccountList())
                 ." Zimbra accounts synced from domain '".$domain."'.");
     }
 
     static public function sync_account($account) {
         $keys_values = array();
-        $keys_values['name'] = $account->name;
+        $keys_values['name'] = $account->getName();
         $bean = retrieve_record_bean('btc_Zimbra_Accounts', $keys_values);
-        $bean->name = $account->name;
-        $account_atributes = get_atributes_as_array($account->a);
+        $bean->name = $account->getName();
+        $account_atributes = get_atributes_as_array($account->getAttrList());
         set_attribute($account_atributes, $bean, 'givenName', 'given_name');
         set_attribute($account_atributes, $bean, 'initials', 'initials');
         set_attribute($account_atributes, $bean, 'sn', 'sn');
