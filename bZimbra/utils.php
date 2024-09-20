@@ -48,6 +48,20 @@ function set_mb_attribute($record_info, $bean, $info_var, $bean_var) {
     }
 }
 
+function set_quota_limit_attr($quota, $bean, $bean_var){
+    $quota_limit = $quota->getQuotaLimit();
+    if (isset($quota_limit)){
+        $bean->$bean_var = bytes_to_megabytes($quota_limit);
+    }
+}
+
+function set_quota_used_attr($quota, $bean, $bean_var){
+    $quota_used = $quota->getQuotaUsed();
+    if (isset($quota_used)){
+        $bean->$bean_var = bytes_to_megabytes($quota_used);
+    }
+}
+
 function check_mx($domain) {
     require('bZimbra/config/valid_mx_servers.php');
     getmxrr($domain, $mx_records);
