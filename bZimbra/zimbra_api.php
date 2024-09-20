@@ -1,6 +1,7 @@
 <?php
 
 require_once 'bZimbra/zimbra-api/vendor/autoload.php';
+use Zimbra\Admin\AdminApi;
 
 abstract class ZimbraAPI {
 
@@ -16,7 +17,7 @@ abstract class ZimbraAPI {
     }
 
     static public function get_api_instance($server_access) {
-        $api = \Zimbra\Admin\AdminFactory::instance($server_access['api_url']);
+        $api = new AdminApi($server_access['api_url']);
         $api->auth($server_access['user'], $server_access['password']);
         return $api;
     }
