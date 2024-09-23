@@ -24,7 +24,7 @@ abstract class Domain {
             ZimbraAccount::sync_all_accounts_of_domain($api_instance, $domain->getName());
             AccountQuota::sync_all_quotas_of_domain($api_instance, $domain->getName());
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getAllDomains())." Zimbra domains synced.");
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getDomainList())." Zimbra domains synced.");
     }
 
     static public function sync_domain($domain) {
