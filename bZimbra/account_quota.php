@@ -41,9 +41,9 @@ abstract class AccountQuota {
 
     static public function sync_quota($quota) {
         $keys_values = array();
-        $keys_values['name'] = $quota['name'];
+        $keys_values['name'] = $quota->getName();
         $bean = retrieve_record_bean('btc_Zimbra_Accounts', $keys_values);
-        $bean->name = $quota['name'];
+        $bean->name = $quota->getName();
         set_quota_limit_attr($quota, $bean,'quota');
         set_quota_used_attr($quota, $bean,'usado');
         $bean->save();
