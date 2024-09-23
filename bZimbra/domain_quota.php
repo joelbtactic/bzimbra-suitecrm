@@ -25,9 +25,9 @@ abstract class DomainQuota {
 
     static public function sync_domain($domain) {
         $keys_values = array();
-        $keys_values['name'] = $domain['name'];
+        $keys_values['name'] = $domain->getName();
         $bean = retrieve_record_bean('btc_bMail', $keys_values);
-        $bean->name = $domain['name'];
+        $bean->name = $domain->getName();
         set_quota_used_attr($domain, $bean,'usado');
         $bean->save();
     }
