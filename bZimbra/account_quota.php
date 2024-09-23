@@ -26,16 +26,16 @@ abstract class AccountQuota {
 
     static public function sync_all_quotas_of_domain($api_instance, $domain) {
         $quotas = $api_instance->getQuotaUsage($domain, true);
-        $accounts_quotas = $quotas->getAccountsQuotas();
+        $accounts_quotas = $quotas->getAccountQuotas();
         if (!isset($accounts_quotas)) {
              $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no "
                      ."accounts quotas to sync. Maybe it's an alias.");
              return;
         }
-        foreach ($quotas->getAccountsQuotas() as $quota) {
+        foreach ($quotas->getAccountQuotas() as $quota) {
             self::sync_quota($quota);
         }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->getAccountsQuotas())
+        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->getAccountQuotas())
                 ." Zimbra quotas synced from domain '".$domain."'.");
     }
 
