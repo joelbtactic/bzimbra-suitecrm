@@ -28,19 +28,23 @@ abstract class ZimbraAccount {
     // }
 
     static public function sync_all_accounts_of_domain($api_instance, $domain) {
-        $domain_sel = new DomainSelector(DomainBy::NAME, $domain);
-        $accounts = $api_instance->getAllAccounts(null, $domain_sel);
-        $accountList = $accounts->getAccountList();
-        if (!isset($accountList)) {
-             $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no accounts to sync. "
-                     ."Maybe it's an alias.");
-             return;
-        }
-        foreach ($accounts->getAccountList() as $account) {
-            self::sync_account($account);
-        }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($accounts->getAccountList())
+        $offset = 0;
+        $limit = 10;
+
+        do {
+            $account_search = $api_instance->searchDirectory(types: 'accounts', domain: $domain, limit: $limit, offset: $offset);
+
+            foreach ($account_search->getAccounts() as $account) {
+                self::sync_account($account);
+                unset($account);
+            }
+            $offset += $limit;
+        } while (count($account_search->getAccounts()) >= $limit);
+
+        $GLOBALS['log']->fatal("[bZimbra] --> ".$account_search->getSearchTotal()
                 ." Zimbra accounts synced from domain '".$domain."'.");
+        unset($account_search);
+        gc_collect_cycles();
     }
 
     static public function sync_account($account) {
