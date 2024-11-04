@@ -12,6 +12,9 @@ abstract class DomainQuota {
                     ."' server...");
             $api_instance = ZimbraAPI::get_api_instance($server_properties);
             self::sync_all_domains_of_server($api_instance);
+            unset($servername);
+            unset($server_properties);
+            gc_collect_cycles();
         }
     }
 
@@ -19,6 +22,8 @@ abstract class DomainQuota {
         $domains = $api_instance->computeAggregateQuotaUsage();
         foreach ($domains->getDomainQuotas() as $domain) {
             self::sync_domain($domain);
+            unset($domain);
+            gc_collect_cycles();
         }
         $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getDomainQuotas())." Zimbra domains quotas synced.");
     }
