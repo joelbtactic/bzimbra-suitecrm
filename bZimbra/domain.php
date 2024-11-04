@@ -14,6 +14,10 @@ abstract class Domain {
                     ."' server...");
             $api_instance = ZimbraAPI::get_api_instance($server_properties);
             self::sync_all_domains_of_server($api_instance);
+            unset($servername);
+            unset($server_properties);
+            unset($api_instance);
+            gc_collect_cycles();
         }
     }
 
