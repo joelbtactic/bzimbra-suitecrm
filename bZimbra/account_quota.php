@@ -25,18 +25,23 @@ abstract class AccountQuota {
     // }
 
     static public function sync_all_quotas_of_domain($api_instance, $domain) {
-        $quotas = $api_instance->getQuotaUsage($domain, true);
-        $accounts_quotas = $quotas->getAccountQuotas();
-        if (!isset($accounts_quotas)) {
-             $GLOBALS['log']->fatal("[bZimbra] --> Domain '".$domain."' has no "
-                     ."accounts quotas to sync. Maybe it's an alias.");
-             return;
-        }
-        foreach ($quotas->getAccountQuotas() as $quota) {
-            self::sync_quota($quota);
-        }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($quotas->getAccountQuotas())
+        $offset = 0;
+        $limit = 10;
+
+        do {
+            $quotas = $api_instance->getQuotaUsage($domain, true, offset: $offset, limit: $limit);
+
+            foreach ($quotas->getAccountQuotas() as $quota) {
+                self::sync_quota($quota);
+                unset($quota);
+            }
+            $offset += $limit;
+        } while (count($quotas->getAccountQuotas()) >= $limit);
+
+        $GLOBALS['log']->fatal("[bZimbra] --> ".$quotas->getSearchTotal()
                 ." Zimbra quotas synced from domain '".$domain."'.");
+        unset($quotas);
+        gc_collect_cycles();
     }
 
     static public function sync_quota($quota) {
