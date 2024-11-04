@@ -4,6 +4,7 @@ function get_atributes_as_array($object_info) {
     $atributes = array();
     foreach ($object_info as $atribute) {
         $atributes[$atribute->getKey()] = $atribute->getValue();
+        unset($atribute);
     }
     return $atributes;
 }
@@ -70,6 +71,7 @@ function check_mx($domain) {
             if (!in_array($mx_record, $valid_mx)) {
                 return false;
             }
+            unset($mx_record);
         }
         return true;
     } else {
