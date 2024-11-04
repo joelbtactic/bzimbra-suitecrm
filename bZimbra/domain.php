@@ -22,13 +22,25 @@ abstract class Domain {
     }
 
     static public function sync_all_domains_of_server($api_instance) {
-        $domains = $api_instance->getAllDomains();
-        foreach ($domains->getDomainList() as $domain) {
-            self::sync_domain($domain);
-            ZimbraAccount::sync_all_accounts_of_domain($api_instance, $domain->getName());
-            AccountQuota::sync_all_quotas_of_domain($api_instance, $domain->getName());
-        }
-        $GLOBALS['log']->fatal("[bZimbra] --> ".count($domains->getDomainList())." Zimbra domains synced.");
+        $offset = 0;
+        $limit = 10;
+        do {
+            $domains_search = $api_instance->searchDirectory(types: 'domains', limit: $limit, offset: $offset);
+
+            foreach ($domains_search->getDomains() as $domain) {
+                    self::sync_domain($domain);
+                    ZimbraAccount::sync_all_accounts_of_domain($api_instance, $domain->getName());
+                    AccountQuota::sync_all_quotas_of_domain($api_instance, $domain->getName());
+                    unset($domain);
+                    gc_collect_cycles();
+            }
+            // Increase the offset for the next iteration
+            $offset += $limit;
+        } while (count($domains_search->getDomains()) >= $limit);
+
+        $GLOBALS['log']->fatal("[bZimbra] --> " . $domains_search->getSearchTotal() . " Zimbra domains synced.");
+        unset($domains_search);
+        gc_collect_cycles();
     }
 
     static public function sync_domain($domain) {
